@@ -110,7 +110,9 @@ const getProductSearch = async (req, res) => {
 
 const getProductHome = async (req, res) => {
   try {
-    let products = await db.Product.findAll();
+    let products = await db.Product.findAll({
+      limit:16
+    });
     return res.status(200).json({
       success: true,
       products: products,
