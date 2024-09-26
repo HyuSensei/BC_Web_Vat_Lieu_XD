@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <>
       <MDBFooter
-        style={{ backgroundColor: "#f8f9fa" }}
+        style={{ backgroundColor: "#EEDFCC" }}
         className="text-center text-lg-start text-muted"
       >
         <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
