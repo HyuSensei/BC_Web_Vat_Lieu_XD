@@ -90,7 +90,7 @@ const Order = () => {
       }
       if (payment === "online") {
         const stripe = await loadStripe(
-          "pk_test_51P6CpDP2UJ6LZY9hdgjHwsQQ2RvvQphx6j3yCBcSBr7E6YDTP58XGaFK5jHuE5Ph0pIvBuJrDpg4ksErf7FIZCIQ00ShIGO30J"
+          "pk_test_51P9qpeJTZBjqYLtWGPLLElOttmEDoIOBBJ1JCs6Zuf6M4Z4hTgxZK14WsuJ9Lx20lB3QFigboaqcTrbbmuEOrzkN00nSEr4pdM"
         );
         dispatch(addOrderOnl(data_order)).then((result) => {
           if (result.payload.success === true) {

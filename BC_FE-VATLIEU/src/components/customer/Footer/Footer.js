@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <>
       <MDBFooter
-        style={{ backgroundColor: "#f8f9fa" }}
+        style={{ backgroundColor: "#EEDFCC" }}
         className="text-center text-lg-start text-muted"
       >
         <section className="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
@@ -65,11 +65,11 @@ const Footer = () => {
                   style={{ color: "#14134f" }}
                   className="text-uppercase fw-bold mb-4"
                 >
-                  LIÊN HỆ
+                  LIÊN HỆ 
                 </h6>
                 <p style={{ color: "#14134f" }}>
                   <MDBIcon color="#14134f" icon="home" className="me-2" />
-                  Lạng Sơn
+                  Tổ 5 Khối 3 Thị Trấn Cao Lộc - Tỉnh Lạng Sơn
                 </p>
                 <p style={{ color: "#14134f" }}>
                   <MDBIcon color="#14134f" icon="envelope" className="me-3" />
@@ -77,7 +77,7 @@ const Footer = () => {
                 </p>
                 <p style={{ color: "#14134f" }}>
                   <MDBIcon color="#14134f" icon="phone" className="me-3" />{" "}
-                  0986538387
+                  Call/Zalo : 0336714261
                 </p>
               </MDBCol>
             </MDBRow>

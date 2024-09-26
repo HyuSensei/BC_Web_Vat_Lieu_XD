@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
+import { MdOutlineManageSearch } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +43,7 @@ const SearchInput = () => {
           }}
           onClick={() => searchClick()}
         >
-          <FaSearch />
+          <MdOutlineManageSearch />
         </button>
       </div>
     </div>

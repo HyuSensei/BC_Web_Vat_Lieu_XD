@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authLogin, logout } from "../../../redux/silce/customer/authSilce";
 import { toast } from "react-toastify";
-import { PiShoppingCartSimpleFill } from "react-icons/pi";
+import { BsCartPlus } from "react-icons/bs";
 import { getTotal } from "../../../redux/silce/customer/cartSlice";
 import { fetchAllCategory } from "../../../redux/silce/customer/categorySlice";
 import SearchInput from "../SearchInput";
@@ -41,7 +41,7 @@ const Header = () => {
   return (
     <>
       <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-        <Container style={{ backgroundColor: "#f8f9fa", borderRadius: "50px" }}>
+        <Container style={{ backgroundColor: "#CDC9C9", borderRadius: "50px" }}>
           <Navbar.Brand>
             <img
               style={{ cursor: "pointer" }}
@@ -85,7 +85,7 @@ const Header = () => {
             </Nav>
             <Nav>
               <Nav.Link>
-                <PiShoppingCartSimpleFill
+                <BsCartPlus
                   onClick={() => navigatePage("/cart")}
                   style={{ fontSize: "35px", color: "#14134f" }}
                 />
