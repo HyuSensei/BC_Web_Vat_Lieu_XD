@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 import { getTotal } from "../../redux/silce/customer/cartSlice";
 import { authLogin } from "../../redux/silce/customer/authSilce";
 import {
@@ -20,9 +21,7 @@ const Order = () => {
   );
   const isAuth = useSelector((state) => state.customer.auth.isAuthSucess);
   const dataUser = useSelector((state) => state.customer.auth.dataUser);
-  const { isLoadingOrder, isSuccessOrder } = useSelector(
-    (state) => state.customer.order
-  );
+  const { isLoadingOrder } = useSelector((state) => state.customer.order);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
@@ -31,7 +30,7 @@ const Order = () => {
   useEffect(() => {
     dispatch(authLogin());
     dispatch(getTotal());
-  }, [cart]);
+  }, [cart, dispatch]);
 
   const isValidOrder = () => {
     if (isAuth === null) {
@@ -44,7 +43,7 @@ const Order = () => {
       return false;
     }
     if (!name) {
-      toast.error("Vui lòng nhập tên người nhận ");
+      toast.error("Vui lòng nhập tên người nhận");
       return false;
     }
     if (!phone) {
@@ -55,7 +54,7 @@ const Order = () => {
       /(([03+[2-9]|05+[6|8|9]|07+[0|6|7|8|9]|08+[1-9]|09+[1-4|6-9]]){3})+[0-9]{7}\b/g.test(
         phone
       );
-    if (isValidPhone === false) {
+    if (!isValidPhone) {
       toast.error("Vui lòng nhập đúng số điện thoại");
       return false;
     }
@@ -67,39 +66,36 @@ const Order = () => {
   };
 
   const orderClick = async () => {
-    let check = isValidOrder();
-    if (check === true) {
-      let user_id = dataUser.id;
-      let data_order = {
+    if (isValidOrder()) {
+      const data_order = {
         cart: cart,
         user: {
           name: name,
           address: address,
           phone: phone,
-          user_id: user_id,
+          user_id: dataUser.id,
           payment: payment,
         },
       };
+
       if (payment === "off") {
         dispatch(addOrderOff(data_order)).then((result) => {
-          if (result.payload.success === true) {
+          if (result.payload.success) {
             dispatch(clearCart());
             navigate("/order_success");
           }
         });
-      }
-      if (payment === "online") {
+      } else if (payment === "online") {
         const stripe = await loadStripe(
           "pk_test_51P9qpeJTZBjqYLtWGPLLElOttmEDoIOBBJ1JCs6Zuf6M4Z4hTgxZK14WsuJ9Lx20lB3QFigboaqcTrbbmuEOrzkN00nSEr4pdM"
         );
         dispatch(addOrderOnl(data_order)).then((result) => {
-          if (result.payload.success === true) {
-            const res = stripe.redirectToCheckout({
-              sessionId: result.payload.id,
-            });
-            if (res.error) {
-              console.log(res.error);
-            }
+          if (result.payload.success) {
+            stripe
+              .redirectToCheckout({ sessionId: result.payload.id })
+              .then((res) => {
+                if (res.error) console.log(res.error);
+              });
           }
         });
       }
@@ -107,132 +103,89 @@ const Order = () => {
   };
 
   return (
-    <div style={{ marginTop: "100px" }} className="container-fluid">
-      <h4>CHI TIẾT ĐẶT HÀNG</h4>
-      <div className="row">
-        <div className="col-6">
-          <hr />
-          <form>
-            <div className="row">
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="exampleInputPassword1">Người nhận hàng</label>
-                  <p style={{ color: "#cd3f34" }}>*</p>
-                  <input
-                    style={{ height: "50px", borderColor: "gray" }}
+    <Container className="mt-5">
+      <h4 className="mb-4">CHI TIẾT ĐẶT HÀNG</h4>
+      <Row>
+        <Col md={6}>
+          <Form>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    Người nhận hàng <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
                     type="text"
-                    className="form-control"
                     value={name}
-                    onChange={(event) => setName(event.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                   />
-                </div>
-              </div>
-              <div className="col-6">
-                <div className="form-group">
-                  <label htmlFor="exampleInputPassword1">Số điện thoại</label>
-                  <p style={{ color: "#cd3f34" }}>*</p>
-                  <input
-                    style={{ height: "50px", borderColor: "gray" }}
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>
+                    Số điện thoại <span className="text-danger">*</span>
+                  </Form.Label>
+                  <Form.Control
                     type="text"
-                    className="form-control"
                     value={phone}
-                    onChange={(event) => setPhone(event.target.value)}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
-                </div>
-              </div>
-            </div>
-            <br />
-            <div className="form-group">
-              <label htmlFor="exampleInputPassword1">Địa chỉ nhận hàng</label>
-              <p style={{ color: "#cd3f34" }}>*</p>
-              <input
-                style={{ height: "50px", borderColor: "gray" }}
+                </Form.Group>
+              </Col>
+            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                Địa chỉ nhận hàng <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
                 type="text"
-                className="form-control"
                 value={address}
-                onChange={(event) => setAddress(event.target.value)}
+                onChange={(e) => setAddress(e.target.value)}
               />
-            </div>
-          </form>
-        </div>
-        <div className="col-6">
-          <div
-            style={{
-              margin: "auto",
-              width: "70%",
-              height: "350px",
-              backgroundColor: "#f5f5f5",
-            }}
-          >
-            <div style={{ paddingLeft: "50px", paddingTop: "40px" }}>
-              <h5>THÀNH TIỀN</h5>
-              <div style={{ marginTop: "20px" }} className="row">
-                <div className="col-6">
-                  <h6>TỔNG</h6>
-                </div>
-                <div className="col-6">
-                  <p style={{ color: "#ce1515 ", fontWeight: "bold" }}>
-                    {cartTotalAmount.toLocaleString("vi-VN")} đ
-                  </p>
-                </div>
+            </Form.Group>
+          </Form>
+        </Col>
+        <Col md={6}>
+          <Card className="bg-light">
+            <Card.Body>
+              <h5 className="mb-4">THÀNH TIỀN</h5>
+              <div className="d-flex justify-content-between mb-3">
+                <h6>TỔNG</h6>
+                <p className="text-danger fw-bold">
+                  {cartTotalAmount.toLocaleString("vi-VN")} đ
+                </p>
               </div>
-              <div>
-                <h6>Phương thức thanh toán</h6>
-                <div style={{ marginTop: "20px" }} className="form-check">
-                  <input
-                    style={{ borderColor: "#4e7661" }}
-                    className="form-check-input"
-                    type="radio"
-                    name="flexRadioDefault"
-                    value={"off"}
-                    onChange={(event) => setPayment(event.target.value)}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexRadioDefault1"
-                  >
-                    Thanh toán khi nhận hàng
-                  </label>
-                </div>
-                <div style={{ marginTop: "20px" }} className="form-check">
-                  <input
-                    style={{ borderColor: "#4e7661" }}
-                    className="form-check-input"
-                    type="radio"
-                    name="flexRadioDefault"
-                    value={"online"}
-                    onChange={(event) => setPayment(event.target.value)}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexRadioDefault2"
-                  >
-                    Thanh toán Online
-                  </label>
-                </div>
-              </div>
-              <div style={{ marginTop: "20px" }}>
-                <button
-                  style={{
-                    width: "80%",
-                    height: "45px",
-                    border: "none",
-                    borderRadius: "15px",
-                    margin: "auto",
-                    backgroundColor: "#4e7661",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                  onClick={() => orderClick()}
-                >
-                  {isLoadingOrder === true ? "LOADING..." : "Đặt Hàng"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              <h6 className="mb-3">Phương thức thanh toán</h6>
+              <Form.Check
+                type="radio"
+                label="Thanh toán khi nhận hàng"
+                name="paymentMethod"
+                value="off"
+                onChange={(e) => setPayment(e.target.value)}
+                className="mb-2"
+              />
+              <Form.Check
+                type="radio"
+                label="Thanh toán Online"
+                name="paymentMethod"
+                value="online"
+                onChange={(e) => setPayment(e.target.value)}
+                className="mb-4"
+              />
+              <Button
+                variant="success"
+                className="w-100"
+                onClick={orderClick}
+                disabled={isLoadingOrder}
+              >
+                {isLoadingOrder ? "ĐANG XỬ LÝ..." : "ĐẶT HÀNG"}
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
