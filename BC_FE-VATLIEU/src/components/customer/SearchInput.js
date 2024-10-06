@@ -1,52 +1,50 @@
 import React, { useState } from "react";
-import { MdOutlineManageSearch } from "react-icons/md";
+import { Container, InputGroup, FormControl, Button } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const SearchInput = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+
   const searchClick = () => {
-    if (!search) {
+    if (!search.trim()) {
       toast.error("Vui lòng nhập tên sản phẩm");
       return;
     }
-    navigate(`/search?name=${search}`);
+    navigate(`/search?name=${encodeURIComponent(search.trim())}`);
   };
+
   const handleKeyPress = (event) => {
-    if (event.keyCode === 13 || event.which === 13) {
+    if (event.key === "Enter") {
       searchClick();
     }
   };
+
   return (
-    <div
-      style={{ marginTop: "20px", marginBottom: "30px" }}
-      className="container"
-    >
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <input
-          style={{ width: "70%", marginRight: "10px" }}
-          className="form-control"
-          type="text"
+    <Container className="my-4">
+      <InputGroup className="mb-3 w-75 mx-auto">
+        <FormControl
           placeholder="Nhập tên sản phẩm..."
+          aria-label="Tìm kiếm sản phẩm"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           onKeyPress={handleKeyPress}
         />
-        <button
-          type="button"
-          className="btn btn"
+        <Button
+          variant="primary"
+          onClick={searchClick}
           style={{
             backgroundColor: "#14134f",
-            color: "white",
-            fontWeight: "bold",
+            borderColor: "#14134f",
           }}
-          onClick={() => searchClick()}
         >
-          <MdOutlineManageSearch />
-        </button>
-      </div>
-    </div>
+          <FaSearch />
+        </Button>
+      </InputGroup>
+    </Container>
   );
 };
+
 export default SearchInput;

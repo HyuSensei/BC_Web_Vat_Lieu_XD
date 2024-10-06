@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { UrlImage } from "../../url";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  ListGroup,
+  Pagination,
+  Spinner,
+} from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-import ReactPaginate from "react-paginate";
 import { getProductCategory } from "../../axios/services";
+import { UrlImage } from "../../url";
 
 const URL_IMAGE = UrlImage();
+
 const ProductCategory = () => {
   const { category_id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +31,6 @@ const ProductCategory = () => {
   const fetchAllProduct = async (page) => {
     try {
       let res = await getProductCategory(category_id, page);
-      console.log(res.data.products);
       setListProduct(res.data.products);
       setTotalPage(res.data.total_page);
     } catch (error) {
@@ -30,137 +38,123 @@ const ProductCategory = () => {
     }
   };
 
-  const handlePageClick = async (e) => {
-    setPage(e.selected + 1);
+  const handlePageClick = (pageNumber) => {
+    setPage(pageNumber);
   };
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <FaStar key={index} color={index < rating ? "#e3c01c" : "#e4e5e9"} />
+    ));
+  };
+
   return (
-    <>
-      <div className="container">
-        <div className="row">
-          <div className="col-3">
-            <h3>DANH MỤC</h3>
+    <Container className="my-5">
+      <Row>
+        <Col md={3}>
+          <h3 className="mb-4">DANH MỤC</h3>
+          <ListGroup>
             {categoriesList &&
-              categoriesList.length > 0 &&
               categoriesList.map((item, index) => (
-                <div key={`categoriesList-${index}`}>
-                  <div style={{ marginBottom: "20px", fontWeight: "bold" }}>
-                    {item.category_parent}
-                  </div>
-                  {item.categories.map((category) => (
-                    <Link
-                      to={`/category/${category.id}`}
-                      style={{ textDecoration: "none" }}
-                      key={category.id}
-                    >
-                      <p
-                        style={{
-                          marginLeft: "20px",
-                          color: "black",
-                        }}
+                <ListGroup.Item
+                  key={`categoriesList-${index}`}
+                  className="border-0 px-0"
+                >
+                  <h6 className="font-weight-bold">{item.category_parent}</h6>
+                  <ListGroup variant="flush">
+                    {item.categories.map((category) => (
+                      <ListGroup.Item
+                        key={category.id}
+                        action
+                        as={Link}
+                        to={`/category/${category.id}`}
+                        className="border-0 pl-3"
                       >
                         {category.name}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </ListGroup.Item>
               ))}
-          </div>
-          <div className="col-9">
-            <div>
-              <div
-                style={{ marginTop: "40px", marginBottom: "40px" }}
-                className="container"
-              >
-                {listProduct && listProduct.length > 0 ? (
-                  <>
-                    <div className="row">
-                      {listProduct.map((item, index) => {
-                        return (
-                          <div
-                            key={`product-${index}`}
-                            style={{ marginBottom: "50px" }}
-                            className="col-3"
-                          >
-                            <div>
-                              <Link to={`/detail/${item.id}`}>
-                                <img
-                                  width={"100%"}
-                                  src={URL_IMAGE + item.image}
-                                  alt=""
-                                />
-                              </Link>
-                            </div>
-                            <div>
-                              <p
-                                style={{
-                                  overflow: "hidden",
-                                  maxHeight: "2.8em",
-                                  lineHeight: "1.4em",
-                                  cursor: "pointer",
-                                }}
-                                onClick={() => navigate(`/detail/${item.id}`)}
-                              >
-                                {item.name}
-                              </p>
-                            </div>
-                            <div>
-                              <FaStar style={{ color: "#e3c01c" }} />
-                              <FaStar style={{ color: "#e3c01c" }} />
-                              <FaStar style={{ color: "#e3c01c" }} />
-                              <FaStar style={{ color: "#e3c01c" }} />
-                              <FaStar style={{ color: "#e3c01c" }} />
-                            </div>
-                            <div>
-                              <p
-                                style={{
-                                  fontWeight: "bold",
-                                }}
-                              >
-                                {item.price.toLocaleString("vi-VN")} đ
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <ReactPaginate
-                      nextLabel=" >"
-                      onPageChange={(e) => handlePageClick(e)}
-                      pageRangeDisplayed={3}
-                      marginPagesDisplayed={2}
-                      pageCount={totalPage}
-                      previousLabel="< "
-                      pageClassName="page-item"
-                      pageLinkClassName="page-link"
-                      previousClassName="page-item"
-                      previousLinkClassName="page-link"
-                      nextClassName="page-item"
-                      nextLinkClassName="page-link"
-                      breakLabel="..."
-                      breakClassName="page-item"
-                      breakLinkClassName="page-link"
-                      containerClassName="pagination"
-                      activeClassName="active"
-                      renderOnZeroPageCount={null}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      <h4>Không có sản phẩm !</h4>
-                    </div>
-                  </>
-                )}
-              </div>
+          </ListGroup>
+        </Col>
+        <Col md={9}>
+          {listProduct && listProduct.length > 0 ? (
+            <>
+              <Row>
+                {listProduct.map((item, index) => (
+                  <Col
+                    key={`product-${index}`}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    className="mb-4"
+                  >
+                    <Card className="h-100 shadow-sm">
+                      <Link to={`/detail/${item.id}`}>
+                        <Card.Img
+                          variant="top"
+                          src={URL_IMAGE + item.image}
+                          alt={item.name}
+                        />
+                      </Link>
+                      <Card.Body className="d-flex flex-column">
+                        <Card.Title
+                          className="mb-2"
+                          style={{
+                            cursor: "pointer",
+                            overflow: "hidden",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical",
+                          }}
+                          onClick={() => navigate(`/detail/${item.id}`)}
+                        >
+                          {item.name}
+                        </Card.Title>
+                        <div className="mb-2">
+                          {renderStars(5)}{" "}
+                          {/* Assuming all products have 5-star rating */}
+                        </div>
+                        <Card.Text className="mt-auto font-weight-bold">
+                          {item.price.toLocaleString("vi-VN")} đ
+                        </Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+              <Pagination className="justify-content-center">
+                <Pagination.Prev
+                  onClick={() => handlePageClick(page - 1)}
+                  disabled={page === 1}
+                />
+                {[...Array(totalPage)].map((_, index) => (
+                  <Pagination.Item
+                    key={index}
+                    active={index + 1 === page}
+                    onClick={() => handlePageClick(index + 1)}
+                  >
+                    {index + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next
+                  onClick={() => handlePageClick(page + 1)}
+                  disabled={page === totalPage}
+                />
+              </Pagination>
+            </>
+          ) : (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
             </div>
-          </div>
-        </div>
-      </div>
-    </>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
